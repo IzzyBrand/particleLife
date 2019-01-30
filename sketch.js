@@ -3,27 +3,24 @@ var particles = [];
 var numTypes = 6;
 var interactions = [];
 
-var friction = 0.95;
+var friction = 0.96;
 var bounciness = 1.1;
 
-var colors;
+let colors;
 var radius = 4;
 
-var maxDist;
+var maxDist = 45;
 var minDist = 1e-2;
 var maxVel = 5;
 
 var controlBar = true;
 var controlBarWidth = 150;
 
-let frictionSlider, particleSlider;
+let frictionSlider, particleSlider, maxVelSlider;
 
 function setup() {
   // create a canvas the same size the window
   createCanvas(window.innerWidth, window.innerHeight);
-
-  // the maximum distance at which particles will affect eachother
-  maxDist = Math.min(window.innerWidth, window.innerHeight)/15;
 
   colors = [color(172, 128, 255),
             color(166, 226, 44),
@@ -49,10 +46,7 @@ function setup() {
   }
 
   if (controlBar) {
-    frictionSlider = createSlider(0, 1000, friction * 1000);
-    frictionSlider.position(controlBarWidth*0.1,20);
-    particleSlider = createSlider(0, 1000, numParticles);
-    particleSlider.position(controlBarWidth*0.1,40);
+    addSlidersToControlBar();
   }
 }
 
@@ -62,15 +56,7 @@ function draw() {
     // draw the controlbar
     fill(24,25,21);
     rect(0,0, controlBarWidth, window.innerHeight);
-
-    friction = frictionSlider.value()/1000;
-    numParticles = particleSlider.value();
-    if (particles.length > numParticles) {
-      particles.pop();
-    }
-    else if (particles.length < numParticles) {
-      particles.push(createParticle());
-    }
+    respondToControlBar();
   }
 
   noStroke();
@@ -160,4 +146,30 @@ function createParticle() {
                         y:Math.random()*4-1},
                   type: getRandInt(0,numTypes)};
   return particle;
+}
+
+function addSlidersToControlBar() {
+  particleSlider = createSlider(0, 1000, numParticles);
+  particleSlider.position(controlBarWidth*0.1,20);
+  frictionSlider = createSlider(0, 1000, friction * 1000);
+  frictionSlider.position(controlBarWidth*0.1,40);
+  maxVelSlider = createSlider(0, 100, maxVel*10);
+  maxVelSlider.position(controlBarWidth*0.1,60);
+  maxDistSlider = createSlider(0, 100, maxDist);
+  maxDistSlider.position(controlBarWidth*0.1,80);
+}
+
+function respondToControlBar() {
+  // update the number of particles according to the slider
+  numParticles = particleSlider.value();
+  if (particles.length > numParticles) {
+    particles.pop();
+  }
+  else if (particles.length < numParticles) {
+    particles.push(createParticle());
+  }
+
+  friction = frictionSlider.value()/1000;
+  maxVel = maxVelSlider.value()/10;
+  maxDist = maxDistSlider.value();
 }
