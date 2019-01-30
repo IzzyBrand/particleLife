@@ -9,7 +9,6 @@ var bounciness = 1.1;
 var colors;
 var radius = 4;
 
-
 var maxDist;
 var minDist = 1e-2;
 var maxVel = 5;
@@ -17,6 +16,8 @@ var maxVel = 5;
 function setup() {
   // create a canvas the same size the window
   createCanvas(window.innerWidth, window.innerHeight);
+
+  // the maximum distance at which particles will affect eachother
   maxDist = Math.min(window.innerWidth, window.innerHeight)/15;
 
   colors = [color(172, 128, 255),
@@ -26,7 +27,7 @@ function setup() {
             color(249, 36,  114),
             color(231, 219, 116)];
 
-  // // create a bunch of particles at random positions and velcities
+  // create a bunch of particles at random positions and velocities
   for (var i=0; i<numParticles; i++) {
     var r = Math.random() * Math.min(window.innerWidth, window.innerHeight) * 0.4;
     var theta = Math.random() * 2 * Math.PI;
@@ -34,9 +35,10 @@ function setup() {
                           y: window.innerHeight/2 + Math.sin(theta) * r},
                     vel: {x:Math.random()*4-1,
                           y:Math.random()*4-1},
-                    type: getRandInt(0,numTypes-1)});
+                    type: getRandInt(0,numTypes)});
   }
 
+  // specify the interactions between particles
   for (var i=0; i<numTypes; i++){
     var row = [];
     for (var j=0; j<numTypes; j++){
@@ -44,7 +46,6 @@ function setup() {
     }
     interactions.push(row);
   }
-  
 }
 
 function draw() {
@@ -67,13 +68,11 @@ function draw() {
         var d = Math.sqrt(d2);
         
         if (d < maxDist) {
-          var c = interactions[p.type][q.type];
-          var e = Math.pow(2,-d/maxDist*25);
+          var c = interactions[p.type][q.type]; // coefficient from particle types
+          var e = Math.pow(2,-d/maxDist*25); // force to prevent intersections
           force.x += (c*d + e) * Math.sqrt(1 - dy2/d2)*Math.sign(dx);
           force.y += (c*d + e) * Math.sqrt(1 - dx2/d2)*Math.sign(dy);
         }
-
-        
       }
     }
 
@@ -117,7 +116,6 @@ function draw() {
   }
 }
 
-
 function getRandInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1) ) + min;
+  return Math.floor(Math.random() * (max - min) ) + min;
 }
