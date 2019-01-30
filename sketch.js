@@ -1,4 +1,4 @@
-var numParticles = 500;
+var numParticles = 700;
 var particles = [];
 var numTypes = 6;
 var interactions = [];
@@ -28,7 +28,7 @@ function setup() {
 
   // // create a bunch of particles at random positions and velcities
   for (var i=0; i<numParticles; i++) {
-    var r = Math.random() * Math.min(window.innerWidth, window.innerHeight) * 0.5;
+    var r = Math.random() * Math.min(window.innerWidth, window.innerHeight) * 0.4;
     var theta = Math.random() * 2 * Math.PI;
     particles.push({pos: {x: window.innerWidth/2 + Math.cos(theta) * r,
                           y: window.innerHeight/2 + Math.sin(theta) * r},
