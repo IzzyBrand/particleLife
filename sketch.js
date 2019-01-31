@@ -1,4 +1,4 @@
-var numParticles = 500;
+var numParticles = 200;
 var particles = [];
 var numTypes = 6;
 var interactions = [];
