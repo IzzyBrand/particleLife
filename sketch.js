@@ -1,17 +1,18 @@
-var numParticles = 400;
+var numParticles = 500;
 var particles = [];
 var numTypes = 6;
 var interactions = [];
 
-var friction = 0.96;
-var bounciness = 1.1;
+var friction = 0.97;
+var bounciness = 1;
+var repulsion = 3;
 
 let colors;
 var radius = 4;
 
-var maxDist = 45;
-var minDist = 1e-2;
-var maxVel = 5;
+var maxDist = 30;
+var minDist = 3e-3;
+var maxVel = 7;
 
 var controlBar = true;
 var controlBarWidth = 150;
@@ -127,7 +128,7 @@ function calculateForce(i) {
 
       if (d < maxDist) {
         var c = interactions[p.type][q.type]; // coefficient from particle types
-        var e = Math.pow(2,-d/maxDist*25); // force to prevent intersections
+        var e = repulsion *  Math.pow(2,-d/maxDist*25); // force to prevent intersections
         force.x += (c*d + e) * Math.sqrt(1 - dy2/d2)*Math.sign(dx);
         force.y += (c*d + e) * Math.sqrt(1 - dx2/d2)*Math.sign(dy);
       }
@@ -142,8 +143,8 @@ function createParticle() {
   var theta = Math.random() * 2 * Math.PI;
   var particle = {pos: {x: (controlBar*controlBarWidth + window.innerWidth)/2 + Math.cos(theta) * r,
                         y: window.innerHeight/2 + Math.sin(theta) * r},
-                  vel: {x:Math.random()*4-1,
-                        y:Math.random()*4-1},
+                  vel: {x:Math.random()*4-2,
+                        y:Math.random()*4-2},
                   type: getRandInt(0,numTypes)};
   return particle;
 }
@@ -151,12 +152,12 @@ function createParticle() {
 function addSlidersToControlBar() {
   particleSlider = createSlider(0, 1000, numParticles);
   particleSlider.position(controlBarWidth*0.1,20);
-  frictionSlider = createSlider(0, 1000, friction * 1000);
+  frictionSlider = createSlider(0, 1000, (1- friction) * 1000);
   frictionSlider.position(controlBarWidth*0.1,40);
-  maxVelSlider = createSlider(0, 100, maxVel*10);
-  maxVelSlider.position(controlBarWidth*0.1,60);
   maxDistSlider = createSlider(0, 100, maxDist);
-  maxDistSlider.position(controlBarWidth*0.1,80);
+  maxDistSlider.position(controlBarWidth*0.1,60);
+  repulsionSlider = createSlider(0, 100, repulsion * 20);
+  repulsionSlider.position(controlBarWidth*0.1,80);
 }
 
 function respondToControlBar() {
@@ -169,7 +170,7 @@ function respondToControlBar() {
     particles.push(createParticle());
   }
 
-  friction = frictionSlider.value()/1000;
-  maxVel = maxVelSlider.value()/10;
+  friction = 1 - frictionSlider.value()/1000;
   maxDist = maxDistSlider.value();
+  repulsion = repulsionSlider.value()/20;
 }
